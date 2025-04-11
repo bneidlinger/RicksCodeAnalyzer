@@ -2,7 +2,7 @@
 
 > "Listen up, Jerry! I made you this code analyzer since you can't tell good code from a hole in the ground."
 
-## 🔥 [VIEW FULL HTML README WITH RICK-THEMED STYLING](https://bneidlinger.github.io/RicksCodeAnalyzer/README.html)
+## 🔥 [VIEW FULL HTML README WITH RICK-THEMED STYLING](https://bneidlinger.github.io/RicksCodeAnalyzer)
 
 ## What is this?
 
