@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick's Code Analyzer README</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --bg-color: #000000;
+            --text-color: #00FF00;
+            --highlight-color: #39FF14;
+            --warning-color: #FF6000;
+            --error-color: #FF0000;
+            --accent1-color: #00FFFF;
+            --accent2-color: #FF00FF;
+            --card-bg: rgba(0, 255, 0, 0.05);
+            --code-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanlines 0.2s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 4px;
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 2px solid var(--text-color);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            background-color: rgba(0, 20, 0, 0.8);
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--accent1-color);
+            text-shadow: 0 0 5px var(--accent1-color);
+            border-bottom: 2px solid var(--accent2-color);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h1 {
+            font-size: 42px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: flicker 3s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 10px var(--accent1-color);
+            }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+                opacity: 0.8;
+                text-shadow: none;
+            }
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            padding: 10px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #CCC;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 255, 0, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'VT323', monospace;
+        }
+
+        th {
+            background-color: rgba(0, 255, 255, 0.2);
+            border: 1px solid var(--text-color);
+            padding: 10px;
+            text-align: left;
+            color: var(--accent1-color);
+        }
+
+        td {
+            border: 1px solid var(--text-color);
+            padding: 10px;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 255, 0, 0.05);
+        }
+
+        .card {
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--warning-color);
+            border-left: 3px solid var(--warning-color);
+            padding-left: 15px;
+            margin: 20px 0;
+            font-size: 22px;
+        }
+
+        .highlight {
+            color: var(--highlight-color);
+            font-weight: bold;
+            text-shadow: 0 0 3px var(--highlight-color);
+        }
+
+        .warning {
+            color: var(--warning-color);
+            font-weight: bold;
+        }
+
+        .error {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        .critical {
+            color: var(--critical-color);
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { text-shadow: 0 0 5px var(--critical-color); }
+            50% { text-shadow: 0 0 20px var(--critical-color); }
+            100% { text-shadow: 0 0 5px var(--critical-color); }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background-color: var(--accent2-color);
+            color: var(--bg-color);
+            border-radius: 10px;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid var(--accent2-color);
+            font-size: 14px;
+            color: var(--accent2-color);
+        }
+
+        .rickroll {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--accent2-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 10s linear infinite;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .rickroll::before {
+            content: "RICK'S SEAL OF APPROVAL";
+            font-size: 10px;
+            text-align: center;
+            color: var(--bg-color);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .system-diagram {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .system-diagram img {
+            max-width: 100%;
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+        }
+
+        .module-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .module-list li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .module-name {
+            color: var(--accent1-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rickroll" onclick="alert('WUBBA LUBBA DUB DUB!')"></div>
+
+        <h1>Rick's Code Analyzer</h1>
+
+        <div class="quote">
+            "Listen up, Jerry! I made you this code analyzer since you can't tell good code from a hole in the ground. Just don't break it or I'll turn you into a living *burp* debugging session."
+        </div>
+
+        <div class="card">
+            <h2>What the hell is this thing?</h2>
+            <p>
+                Look, it's simple, even for your tiny Jerry brain. This is a code analyzer that scans your pathetic excuse for code and tells you just how <span class="highlight">terrible</span> it actually is. It's like a portal gun for your code, except instead of taking you to cool dimensions, it just points out all the places where you screwed up.
+            </p>
+            <p>
+                The analyzer gives you basic stats, detects potential issues, and generates reports with fancy visualizations that even you can understand. I added some <span class="error">security vulnerability detection</span>, because knowing you, your code probably has more holes than Swiss cheese in a dimension where holes are their main export.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Features (that you'll probably break)</h2>
+            <ul>
+                <li><span class="highlight">Basic Code Analysis:</span> Counts lines, detects languages, finds the largest files (aka where you dumped all your spaghetti code)</li>
+                <li><span class="highlight">Advanced Analysis:</span> Detects code smells, security vulnerabilities, performance issues, and other garbage you left behind</li>
+                <li><span class="highlight">HTML Reports:</span> Generates fancy reports with charts that make your code problems look *burp* pretty</li>
+                <li><span class="highlight">Fun Analysis:</span> Detects Rick & Morty references, "Jerry Code" patterns, and assigns personality traits to your files</li>
+                <li><span class="highlight">Retro Terminal UI:</span> Because I'm not making you a boring corporate tool - this has style, Jerry!</li>
+            </ul>
+        </div>
+
+        <h2>System Architecture (pay attention, Jerry!)</h2>
+        <p>The system works like this, not that you'd understand the genius behind it:</p>
+
+        <div class="system-diagram">
+            <pre>
+ ┌──────────────────┐      ┌───────────────────┐     ┌──────────────────┐
+ │                  │      │                   │     │                  │
+ │  Main Interface  │─────▶│   Basic Analysis  │────▶│  Report Generator│
+ │  (rickscode_     │      │   - Code stats    │     │  - HTML output   │
+ │   advanced.py)   │◀─────│   - File parsing  │◀────│  - Visualizations│
+ │                  │      │                   │     │                  │
+ └──────────────────┘      └───────────────────┘     └──────────────────┘
+         ▲  ▼                      ▲  ▼                     ▲  ▼
+         │  │                      │  │                     │  │
+         │  │                      │  │                     │  │
+ ┌───────┘  └────────┐     ┌──────┘  └────────┐    ┌───────┘  └────────┐
+ │                   │     │                   │    │                   │
+ │ Advanced Analyzer │     │ Fun Analyzer      │    │ Advanced Reporter │
+ │ - Code smells     │     │ - Rick references │    │ - HTML templates  │
+ │ - Security issues │     │ - Jerry patterns  │    │ - Visualizations  │
+ │ - Perf problems   │     │ - Code personality│    │ - Browser launch  │
+ └───────────────────┘     └───────────────────┘    └───────────────────┘
+            </pre>
+        </div>
+
+        <h2>Module Breakdown</h2>
+        <ul class="module-list">
+            <li><span class="module-name">rickscode_advanced.py</span> - Main application with UI and basic analysis functionality</li>
+            <li><span class="module-name">advanced_analyzer.py</span> - Performs deeper code analysis for anti-patterns, security issues, etc.</li>
+            <li><span class="module-name">advanced_reporter.py</span> - Generates fancy HTML reports with visualizations</li>
+            <li><span class="module-name">fun_analyzer.py</span> - Searches for Rick & Morty references and other fun metrics</li>
+        </ul>
+
+        <h2>Installation (even YOU can't mess this up... or can you?)</h2>
+        <p>Follow these steps carefully, Jerry. I'm writing them in simple terms just for you:</p>
+
+        <div class="card">
+            <h3>1. Clone the Repository</h3>
+            <pre><code>git clone https://github.com/your-username/ricks-code-analyzer.git
+cd ricks-code-analyzer</code></pre>
+            <p class="warning">Don't tell me you don't know how to use git. *sigh*</p>
+        </div>
+
+        <div class="card">
+            <h3>2. Set Up Virtual Environment (optional but recommended)</h3>
+            <pre><code>python -m venv venv
+# On Windows
+venv\Scripts\activate
+# On macOS/Linux
+source venv/bin/activate</code></pre>
+        </div>
+
+        <div class="card">
+            <h3>3. Install Requirements</h3>
+            <pre><code>pip install -r requirements.txt</code></pre>
+            <p>Required packages:</p>
+            <ul>
+                <li><code>tkinter</code> (usually comes with Python)</li>
+                <li><code>jinja2</code> (for report generation)</li>
+                <li><code>pygments</code> (for code highlighting)</li>
+                <li><code>chardet</code> (for file encoding detection)</li>
+            </ul>
+            <p class="warning">That's the bare minimum, Jerry. If you can't even install these, just give up now.</p>
+        </div>
+
+        <div class="card">
+            <h3>4. Run the Analyzer</h3>
+            <pre><code>python rickscode_advanced.py</code></pre>
+            <p>This opens the main UI window. From there even someone like you can figure it out:</p>
+            <ol>
+                <li>Click <span class="highlight">BROWSE</span> to select your project directory</li>
+                <li>Click <span class="highlight">ANALYZE CODE</span> to run basic analysis</li>
+                <li>After that completes, you can run <span class="highlight">RUN ADVANCED ANALYSIS</span> or <span class="highlight">RUN FUN ANALYSIS</span></li>
+                <li>Generate reports with the appropriate report buttons</li>
+            </ol>
+        </div>
+
+        <h2>Example Usage</h2>
+        <p>Let's say you've written some terrible code (which, let's be honest, is a given):</p>
+
+        <pre><code># Open the analyzer
+python rickscode_advanced.py
+
+# Select your garbage project directory
+# Click "ANALYZE CODE"
+# Wait for basic analysis to complete
+# Click "RUN ADVANCED ANALYSIS"
+# Review the results
+# Click "GENERATE REPORT" to create an HTML report
+# HTML report will open in your browser</code></pre>
+
+        <div class="card">
+            <h2>Known Issues (besides you, Jerry)</h2>
+            <ul>
+                <li>Large files might be processed slowly - be patient, Jerry!</li>
+                <li>Some complex syntax might not be perfectly analyzed</li>
+                <li>If any modules are missing, the corresponding functionality will be disabled</li>
+                <li>The report browser auto-open might not work on all systems (just navigate to the report file manually)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Contributing</h2>
+            <p>If you think you can improve this, you're probably wrong, but knock yourself out:</p>
+            <ol>
+                <li>Fork the repository</li>
+                <li>Create a new branch (<code>git checkout -b feature/your-feature-name</code>)</li>
+                <li>Make your changes</li>
+                <li>Commit your changes (<code>git commit -m 'Add some feature'</code>)</li>
+                <li>Push to the branch (<code>git push origin feature/your-feature-name</code>)</li>
+                <li>Create a Pull Request</li>
+            </ol>
+            <p>I'll probably reject it, but hey, surprise me for once!</p>
+        </div>
+
+        <h2>Requirements.txt</h2>
+        <pre>
+jinja2>=2.11.3
+pygments>=2.7.4
+chardet>=4.0.0
+        </pre>
+
+        <div class="quote">
+            "If you somehow make this tool better, consider it beginner's luck. If you break it, well... that's just classic Jerry."
+        </div>
+
+        <div class="footer">
+            <p>© Wubba Lubba Dub Dub Inc. | Use at your own risk!</p>
+            <p>This project is licensed under the "Don't Be a Jerry" License - Basically, do whatever you want but don't blame me when you break it.</p>
+        </div>
+    </div>
+
+    <script>
+        // Add some retro terminal effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add random glitches
+            setInterval(function() {
+                const elements = document.querySelectorAll('h1, h2, h3, .highlight');
+                const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                randomElement.style.opacity = '0.5';
+                setTimeout(function() {
+                    randomElement.style.opacity = '1';
+                }, 100);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
